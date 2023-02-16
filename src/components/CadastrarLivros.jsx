@@ -16,7 +16,7 @@ class CadastrarLivros extends Component {
     autorRef = React.createRef();
 
     componentDidUpdate(prevProps) {
-        if (this.props.livro !== prevProps.livro) {
+        if (this.props !== prevProps) {
           this.setState({
             livro: {
               id: this.props.livro.id,
