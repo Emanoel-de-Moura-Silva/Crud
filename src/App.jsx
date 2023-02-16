@@ -1,4 +1,4 @@
-import { Component, React } from 'react';
+import React, { Component } from 'react';
 import {BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Menu from './components/Menu';
@@ -44,32 +44,35 @@ class App extends Component {
         livros: newLivros
       })
     }
-  render(){
-  return (
-    <Router>
-      <Menu />
-      <Routes>
-        <Route exact path='/' element={<TabelaLivros livros={this.state.livros}/>}/>
-        <Route exact path='/cadastrar' element={<CadastrarLivros 
-        inserirLivro = {this.inserirLivro}
-        livro = {{id: 0 , isbn: "", titulo: "",autor: ""}} />}/>
-      
-  <Route path="/editar/:isbnLivro" element={
-    ({ params }) => {
-      const livro = this.state.livros.find((livro) => livro.isbn === params.isbnLivro);
-      if(livro){
-        return (
-          React.createElement(CadastrarLivros, { editarLivro: this.editarLivro, livro: livro })
-        )
-      } else {
-        return React.createElement(Navigate, { to: "/" });
+    removerLivro = (livro) => {
+      if(window.confirm('Remover esse livro?')){
+        const livros = this.state.livros.filter((p) => p.isnb !== livro.isbn);
+        this.setState({livros})
       }
     }
-  } />
-        <Route component= {NotFound}/>
-      </Routes>
-    </Router>
-  );
-}
-}
-export default App;
+    render() {
+      return (
+        <Router>
+          <React.Fragment>
+            <Menu />
+            <Routes>
+              <Route exact path="/" element={<TabelaLivros livros={this.state.livros} removerLivro={this.removerLivro} />} />
+              <Route exact path="/cadastrar" element={<CadastrarLivros inserirLivro={this.inserirLivro} livro={{ id: 0, isbn: "", titulo: "", autor: "" }} />} />
+              {/**Colocar a logica dessa porra no Component CadastrarLivros */}
+              <Route path="/editar/:isbnLivro" element={(params) => {
+                console.log('----'+params.isbnLivro)
+                const livro = this.state.livros.find(livro => livro.isbn === params.isbnLivro);
+                return livro ?
+                  <CadastrarLivros editarLivro={this.editarLivro} livro={livro} /> :
+                  <Navigate to="/" />;
+              }} />
+            </Routes>
+          </React.Fragment>
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      );
+    }
+  }
+  export default App;    
